@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #1d1d1f;
+      }
+    </style>
+    <title>Passarinho</title>
+  </head>
+  <body>
+    <script>
+      // Configurações do jogo (Dimensões, Cenas)
+      var config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+
+        scene: {
+          preload: preload,
+          create: create,
+          update: update,
+        },
+      };
+
+      // Aplica as configs no jogo
+      var game = new Phaser.Game(config);
+
+      // Definição de variáveis
+      var passarinho; // Objeto passarinho
+
+      function preload() {
+        // Carrega as imagens (Passarinho, Background)
+        this.load.image("bg", "assets/bg_space.png");
+        this.load.spritesheet("bird", "assets/bird-purple.png", {
+          frameWidth: 75,
+          frameHeight: 75,
+        });
+      }
+
+      function create() {
+        // Adiciona no jogo (Passarinho, Background)
+        this.add.image(400, 300, "bg").setScale(1.2);
+        passarinho = this.add.sprite(100, 60, "bird").setScale(1.3);
+
+        // Cria a animação de voo do passarinho
+        this.anims.create({
+          key: "fly",
+          frames: this.anims.generateFrameNumbers("bird", {
+            start: 0, // Frame de inicio
+            end: 7, // Frame final
+          }),
+          frameRate: 15, // Velocidade da animação
+          repeat: -1, // Infinita
+        });
+
+        // Inicia a animação
+        passarinho.anims.play("fly");
+
+        // * Variável da solução 2 *
+        //passarinho.subindo = true; // (Descomentar caso usar a 2)
+
+        // ===================================
+        //      * Desafio For / While *
+        // ===================================
+        
+        // Laço de repetição usando for 
+        // Repete o console.log 5 vezes
+        for (let i = 0; i < 5; i++) {
+          console.log("Desafio For"); 
+        }
+        
+        // Variável de contagem do while
+        let count = 0;
+        // Laço de repetição usando While 
+        // Repete o console.log 5 vezes
+        while(count < 5){
+          console.log("Desafio While");
+          count++;
+        }
+
+        // ===================================
+        //            * Solução 3 *
+        // - Movimento vertical e horizontal
+        // - Método Tweens
+        // ===================================
+
+        // * Movimento Horizontal *
+        // Cria a interpolação (Tweens)
+        // Será uma interpolação cúbica com suavidade no começo e no final
+        // Causando um efeito de desaceleração para não bater nas bordas
+        this.tweens.add({
+          targets: passarinho, // Quem fará o movimento
+          x: 700, // Até qual posição será o movimento
+          duration: 1900, // Duração do movimento (velocidade)
+          ease: "Cubic.easeInOut", // Define que será cubica
+          repeat: -1, // Infinita
+          yoyo: true, // Ida e Volta (continua)
+          // Função chamada na ida
+          onRepeat: () => {
+            passarinho.setFlip(false, false); // Vira o passarinho para a direita
+          },
+          // Função chamada na volta
+          onYoyo: () => {
+            passarinho.setFlip(true, false); // Vira o passarinho para a esquerda
+          },
+        });
+
+        // * Movimento Vertical *
+        // Cria a interpolação (Tweens)
+        // Será uma interpolação linear
+        // Causando um efeito de planando na queda
+        this.tweens.add({
+          targets: passarinho, // Objeto afetado
+          y: 540, // Até qual posição irá (y = 540)
+          ease: "Linear", // Define que será linear
+          duration: 4000, // Duração do movimento (velocidade)
+          repeat: -1, // Infinita
+          yoyo: true, // Ida e Volta (continuo)
+        });
+      }
+
+      function update() {
+        /*
+        // ===================================
+        //        * Solução numero 1 *
+        //  - Somente movimento horizontal
+        // ===================================
+
+        // Método de voo horizontal do tutorial
+
+        // Verifica se o passarinho esta na posição x = 100
+        if (passarinho.x === 100) {
+          // Deixa o passarinho virado para a direita
+          passarinho.setFlip(false, false);
+          // Define em uma propriedade no passarinho como ida = true (indo para a direita)
+          passarinho.ida = true;
+        }
+
+        // Verifica se o passarinho esta antes do limite de 700 e se esta indo para a direita
+        if (passarinho.x < 700 && passarinho.ida === true) {
+          // Faz com que o passarinho voe para a direita
+          passarinho.x += 5;
+        }
+
+        // Verifica se o passarinho esta no limite de x = 7000
+        if (passarinho.x === 700) {
+          // Vira o passarinho para a esquerda
+          passarinho.setFlip(true, false);
+          // Define a propriedade do passarinho ida = false (indo para a esquerda)
+          passarinho.ida = false;
+        }
+
+        // Verifica se o passarinho esta antes do limite de x = 100 e se esta indo para a esquerda
+        if (passarinho.x > 100 && passarinho.ida === false) {
+          // Faz com que o passarinho voe para a esquerda
+          passarinho.x -= 5;
+        } */
+        // ===========================================
+        /* 
+        // ===================================
+        //        * Solução numero 2 *
+        // - Movimento vertical e horizontal
+        // - Método de if/else
+        // ===================================
+
+        // * Movimento horizontal *
+
+        // Verifica se o passarinho está subindo
+        if (passarinho.ida) {
+          // Aumenta o X do passarinho
+          passarinho.x += 5;
+          // Deixa o passarinho virado para a direita
+          passarinho.setFlip(false, false);
+          
+          // Verifica se o passarinho chegou na borda invisível, definida como x = 700
+          if (passarinho.x >= 700) {
+            // Muda a variável como false, representando que o passarinho está voltando
+            passarinho.ida = false;
+          }
+        } else {
+          // Faz o passarinho andar para a esquerda
+          passarinho.x -= 5;
+          // Vira o passarinho para a esquerda
+          passarinho.setFlip(true, false);
+
+          // Verifica se o passarinho chegou na borda invisível, definida como x = 100
+          if (passarinho.x <= 100) {
+            // Muda a variável como true, representando que o passarinho está indo
+            passarinho.ida = true;
+          }
+        } 
+        
+        // * Movimento vertical *
+
+        // Verifica se o passarinho esta abaixo do limite e se está subindo
+        if (passarinho.y > 60 && passarinho.subindo) {
+          // Abaixa o passarinho em 1 pixel
+          passarinho.y += -1;
+
+          // Verifica se o passarinho esta abaixo do limite e se está descendo
+        } else if (passarinho.y < 540 && !passarinho.subindo) {
+          // Eleva o passarinho em 1 pixel
+          passarinho.y += 1;
+        } else {
+          // Se o passarinho estiver subindo, ele inverte a logica e define como descendo
+          // e se estiver descendo, ele inverte a logica e define como subindo
+          passarinho.subindo = !passarinho.subindo;
+        }
+
+        // Mostra a altura do passarinho
+        console.log(passarinho.y); */
+      }
+    </script>
+  </body>
+</html>
